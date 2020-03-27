@@ -2,45 +2,104 @@ defmodule HundredPoints.UserServer do
   use GenServer
   alias HundredPoints.User
 
-  def init(users) do
-    {:ok, users}
+  def init(players) do
+    {:ok, players}
   end
 
-  def start_link(users) do
-    GenServer.start_link(__MODULE__, users, name: __MODULE__)
+  def start_link(players) do
+    GenServer.start_link(__MODULE__, players, name: __MODULE__)
   end
 
   def add_user(username) do
     GenServer.call(__MODULE__, {:add_user, username})
   end
 
-  def all_users do
-    GenServer.call(__MODULE__, :all_users)
+  # TODO: this is for scoring, maybe game responsibility
+  def standings do
+    GenServer.call(__MODULE__, :standings)
   end
 
-  def handle_call({:add_user, username}, _from, users) do
-    case validate_username(users, username) do
+  def reset_scores do
+    GenServer.call(__MODULE__, :reset_scores)
+  end
+
+  def next_active_player do
+    GenServer.call(__MODULE__, :next_active_player)
+  end
+
+  def select_active_player(username) do
+    GenServer.call(__MODULE__, {:select_active_player, username})
+  end
+
+  def award_points(points) do
+    GenServer.call(__MODULE__, {:award_points, points})
+  end
+
+  def shuffle_players do
+    GenServer.cast(__MODULE__, :shuffle_players)
+  end
+
+  def handle_call({:add_user, username}, _from, players) do
+    case validate_username(players, username) do
       :ok ->
-        moderator = Enum.empty?(users)
+        moderator = Enum.empty?(players)
         user = %User{username: username, moderator: moderator}
-        {:reply, {:ok, user}, [user | users]}
+        {:reply, {:ok, user}, [user | players]}
 
       {:error, error} ->
-        {:reply, {:error, error}, users}
+        {:reply, {:error, error}, players}
     end
   end
 
-  def handle_call(:all_users, _from, users) do
-    {:reply, Enum.sort(users, &(&1.score >= &2.score)), users}
+  def handle_call(:standings, _from, players) do
+    {:reply, Enum.sort(players, &(&1.score >= &2.score)), players}
   end
 
-  defp find_user(users, username) do
-    Enum.find(users, & &1.username == username)
+  def handle_call(:reset_scores, _from, players) do
+    reset_players = Enum.map(players, &%{&1 | score: 0})
+    {:reply, reset_players, reset_players}
+  end
+
+  def handle_call(:next_active_player, _from, [active_player | [next_player | other_players]]) do
+    {:reply, next_player, [next_player | other_players ++ [active_player]]}
+  end
+
+  def handle_call({:select_active_player, username}, _from, players) do
+    [next_player | other_players] = rotate_to_user(username, players)
+    {:reply, next_player, [next_player | other_players]}
+  end
+
+  def handle_call({:award_points, points}, _from, [active_player | [next_player | other_players]]) do
+    {
+      :reply,
+      next_player,
+      [next_player |
+        other_players ++ [
+          %{active_player | score: active_player.score + points}
+        ]
+      ]
+    }
+  end
+
+  def handle_cast(:shuffle_players, players) do
+    {:noreply, Enum.shuffle(players)}
+  end
+
+  defp find_user(players, username) do
+    Enum.find(players, & &1.username == username)
+  end
+
+  defp rotate_to_user(username, [%{username: username} | _other_players] = players) do
+    players
+  end
+
+  defp rotate_to_user(username, [next_up | other_players]) do
+    rotate_to_user(username, other_players ++ [next_up])
   end
 
   @min_length 3
   @max_length 24
-  defp validate_username(users, username) do
+  defp validate_username(players, username) do
     case String.length(username) do
       n when n < @min_length ->
         {:error, "Username must be at least 3 characters"}
@@ -49,7 +108,7 @@ defmodule HundredPoints.UserServer do
         {:error, "Username may not exceed 24 characters"}
 
       _ ->
-        case find_user(users, username) do
+        case find_user(players, username) do
           %User{} -> {:error, "Username taken!"}
           nil -> :ok
         end

@@ -17,7 +17,23 @@ defmodule HundredPoints.CardServer do
     end
   end
 
+  def next_card do
+    GenServer.call(__MODULE__, :next_card)
+  end
+
+  def shuffle_cards do
+    GenServer.cast(__MODULE__, :shuffle_cards)
+  end
+
   def handle_call({:add_card, card}, _from, cards) do
-    {:reply, {:ok, card}, [card | cards] |> IO.inspect}
+    {:reply, {:ok, card}, cards ++ [card]}
+  end
+
+  def handle_call(:next_card, _from, [next_card | rest_of_cards]) do
+    {:reply, next_card, rest_of_cards}
+  end
+
+  def handle_cast(:shuffle_cards, cards) do
+    {:noreply, Enum.shuffle(cards)}
   end
 end

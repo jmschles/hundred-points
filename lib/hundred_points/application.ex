@@ -12,7 +12,8 @@ defmodule HundredPoints.Application do
       HundredPointsWeb.Endpoint,
       # Starts a worker by calling: HundredPoints.Worker.start_link(arg)
       {HundredPoints.UserServer, []},
-      {HundredPoints.CardServer, []}
+      {HundredPoints.CardServer, []},
+      {HundredPoints.GameServer, %{}}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

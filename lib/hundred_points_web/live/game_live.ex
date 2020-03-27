@@ -9,8 +9,22 @@ defmodule HundredPointsWeb.GameLive do
         Your score is <%= @score %>.
         <%= if @moderator do %>
           You are the moderator.
+          <%= if @phase == :preparation do %>
+            <button phx-click="start_game">Start the game!</button>
+          <% end %>
         <% end %>
       </div>
+
+      <%= if @phase == :playing do %>
+        <div id="active-card">
+
+        </div>
+      <% else %>
+        <div>
+          Make cards until the moderator starts the game!
+        </div>
+      <% end %>
+
       <div>
         <h4>Make a card!</h4>
         <form action="#" method="post" phx-submit="save_card">
@@ -60,13 +74,13 @@ defmodule HundredPointsWeb.GameLive do
        username: username,
        score: score,
        moderator: moderator,
-       players: HundredPoints.UserServer.all_users(),
+       players: HundredPoints.UserServer.standings(),
        notice: nil
      )}
   end
 
   def handle_info(%{event: "player_joined"}, socket) do
-    {:noreply, assign(socket, players: HundredPoints.UserServer.all_users())}
+    {:noreply, assign(socket, players: HundredPoints.UserServer.standings())}
   end
 
   def handle_event("save_card", params, socket) do
