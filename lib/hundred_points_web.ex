@@ -42,6 +42,8 @@ defmodule HundredPointsWeb do
       import HundredPointsWeb.ErrorHelpers
       import HundredPointsWeb.Gettext
       alias HundredPointsWeb.Router.Helpers, as: Routes
+
+      import Phoenix.LiveView.Helpers
     end
   end
 
@@ -50,6 +52,7 @@ defmodule HundredPointsWeb do
       use Phoenix.Router
       import Plug.Conn
       import Phoenix.Controller
+      import Phoenix.LiveView.Router
     end
   end
 
