@@ -14,6 +14,10 @@ defmodule HundredPoints.UserServer do
     GenServer.call(__MODULE__, {:add_user, username})
   end
 
+  def all_users do
+    GenServer.call(__MODULE__, :all_users)
+  end
+
   def handle_call({:add_user, username}, _from, users) do
     case validate_username(users, username) do
       :ok ->
@@ -26,7 +30,11 @@ defmodule HundredPoints.UserServer do
     end
   end
 
-  def find_user(users, username) do
+  def handle_call(:all_users, _from, users) do
+    {:reply, Enum.sort(users, &(&1.score >= &2.score)), users}
+  end
+
+  defp find_user(users, username) do
     Enum.find(users, & &1.username == username)
   end
 
