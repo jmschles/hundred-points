@@ -9,9 +9,9 @@ defmodule HundredPoints.Application do
     # List all child processes to be supervised
     children = [
       # Start the endpoint when the application starts
-      HundredPointsWeb.Endpoint
+      HundredPointsWeb.Endpoint,
       # Starts a worker by calling: HundredPoints.Worker.start_link(arg)
-      # {HundredPoints.Worker, arg},
+      {HundredPoints.UserServer, []}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

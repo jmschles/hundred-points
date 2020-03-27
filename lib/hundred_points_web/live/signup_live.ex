@@ -1,9 +1,9 @@
 defmodule HundredPointsWeb.SignupLive do
   use Phoenix.LiveView
 
-  def render(%{username: _username} = assigns) do
+  def render(%{user: _user} = assigns) do
     ~L"""
-    <%= live_render(@socket, HundredPointsWeb.GameLive, session: %{"username" => @username}, id: "game") %>
+    <%= live_render(@socket, HundredPointsWeb.GameLive, session: %{"user" => @user}, id: "game") %>
     """
   end
 
@@ -30,25 +30,12 @@ defmodule HundredPointsWeb.SignupLive do
   end
 
   def handle_event("save", %{"user" => username}, socket) do
-    case validate(username) do
+    case HundredPoints.UserServer.add_user(username) do
       {:error, error} ->
         {:noreply, assign(socket, notice: error)}
 
-      {:ok, username} ->
-        {:noreply, assign(socket, username: username)}
-    end
-  end
-
-  defp validate(username) do
-    case String.length(username) do
-      n when n < 3 ->
-        {:error, "Username must be at least 3 characters"}
-
-      n when n > 24 ->
-        {:error, "Username may not exceed 24 characters"}
-
-      _ ->
-        {:ok, username}
+      {:ok, user} ->
+        {:noreply, assign(socket, user: user)}
     end
   end
 end

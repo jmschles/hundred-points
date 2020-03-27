@@ -6,12 +6,16 @@ defmodule HundredPointsWeb.GameLive do
     <div class="">
       <div>
         Hey <%= @username %>!!
+        Your score is <%= @score %>.
+        <%= if @moderator do %>
+          You are the moderator.
+        <% end %>
       </div>
     </div>
     """
   end
 
-  def mount(_params, %{"username" => username}, socket) do
-    {:ok, assign(socket, username: username)}
+  def mount(_params, %{"user" => %{username: username, score: score, moderator: moderator}}, socket) do
+    {:ok, assign(socket, username: username, score: score, moderator: moderator)}
   end
 end
