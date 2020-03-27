@@ -12,6 +12,24 @@ defmodule HundredPointsWeb.GameLive do
         <% end %>
       </div>
       <div>
+        <h4>Make a card!</h4>
+        <form action="#" method="post" phx-submit="save_card">
+        <input name="_csrf_token" type="hidden" value="FIXME">
+          <label for="action">Action description:</label>
+          <input type="text" name="action" id="action">
+
+          <label for="points">Point value</label>
+          <input type="text" name="points" id="points">
+
+          <%= if @notice do %>
+            <p><em><%= @notice %></em></p>
+          <% end %>
+
+          <button type="submit">Add card!</button>
+        </form>
+      </div>
+      <div>
+        <h4>Scores</h4>
         <table>
           <tr>
             <td>Name</td>
@@ -42,11 +60,22 @@ defmodule HundredPointsWeb.GameLive do
        username: username,
        score: score,
        moderator: moderator,
-       players: HundredPoints.UserServer.all_users()
+       players: HundredPoints.UserServer.all_users(),
+       notice: nil
      )}
   end
 
   def handle_info(%{event: "player_joined"}, socket) do
     {:noreply, assign(socket, players: HundredPoints.UserServer.all_users())}
+  end
+
+  def handle_event("save_card", params, socket) do
+    case HundredPoints.CardServer.add_card(params) do
+      {:error, error} ->
+        {:noreply, assign(socket, notice: error)}
+
+      {:ok, _card} ->
+        {:noreply, assign(socket, notice: "Card added")}
+    end
   end
 end

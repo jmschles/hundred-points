@@ -11,7 +11,8 @@ defmodule HundredPointsWeb.SignupLive do
     ~L"""
     <div class="">
       <div>
-        <form action="#" method="post" phx-submit="save"><input name="_csrf_token" type="hidden" value="BUw_G3cRHxxMFwwpezA5NFJUaSURWjUkO6VoDYoO5tcKBihzec0GYiSe">
+        <form action="#" method="post" phx-submit="save">
+          <input name="_csrf_token" type="hidden" value="FIXME">
           <label for="user">Hi! What's your name?</label>
           <input type="text" name="user" id="user">
           <%= if @notice do %>
