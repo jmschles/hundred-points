@@ -3,7 +3,8 @@ defmodule HundredPoints.CardServer do
   alias HundredPoints.Card
 
   def init(cards) do
-    {:ok, cards}
+    # REMOVE ME
+    {:ok, seed_cards()}
   end
 
   def start_link(cards) do
@@ -39,5 +40,14 @@ defmodule HundredPoints.CardServer do
 
   def handle_cast(:shuffle_cards, cards) do
     {:noreply, Enum.shuffle(cards)}
+  end
+
+  defp seed_cards do
+    [
+      %Card{points: 10, action: "Jump"},
+      %Card{points: 20, action: "Hide"},
+      %Card{points: 30, action: "Giggle"},
+      %Card{points: 50, action: "Dance"}
+    ]
   end
 end

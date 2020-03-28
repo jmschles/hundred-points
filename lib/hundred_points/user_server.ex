@@ -27,6 +27,10 @@ defmodule HundredPoints.UserServer do
     GenServer.call(__MODULE__, :reset_scores)
   end
 
+  def get_active_player do
+    GenServer.call(__MODULE__, :get_active_player)
+  end
+
   def next_active_player do
     GenServer.call(__MODULE__, :next_active_player)
   end
@@ -45,6 +49,10 @@ defmodule HundredPoints.UserServer do
 
   def reassign_moderator(username) do
     GenServer.cast(__MODULE__, {:reassign_moderator, username})
+  end
+
+  def kick_player(username) do
+    GenServer.cast(__MODULE__, {:kick_player, username})
   end
 
   def handle_call({:add_player, username}, _from, players) do
@@ -70,6 +78,10 @@ defmodule HundredPoints.UserServer do
   def handle_call(:reset_scores, _from, players) do
     reset_players = Enum.map(players, &%{&1 | score: 0})
     {:reply, reset_players, reset_players}
+  end
+
+  def handle_call(:get_active_player, _from, [active_player | _other_players] = players) do
+    {:reply, active_player, players}
   end
 
   # If you're playing by yourself, or testing, or just trying to break stuff
@@ -104,6 +116,10 @@ defmodule HundredPoints.UserServer do
 
   def handle_cast({:reassign_moderator, username}, players) do
     {:noreply, Enum.map(players, &%{&1 | moderator: &1.username == username})}
+  end
+
+  def handle_cast({:kick_player, username}, players) do
+    {:noreply, Enum.reject(players, & &1.username == username)}
   end
 
   defp find_user(players, username) do

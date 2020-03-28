@@ -38,6 +38,10 @@ defmodule HundredPoints.GameServer do
     GenServer.call(__MODULE__, {:reassign_moderator, username})
   end
 
+  def kick_player(username) do
+    GenServer.call(__MODULE__, {:kick_player, username})
+  end
+
   def action_performed do
     GenServer.call(__MODULE__, :action_performed)
   end
@@ -113,6 +117,19 @@ defmodule HundredPoints.GameServer do
     updated_state = %{
       state | players: HundredPoints.UserServer.players_in_turn_order(),
     }
+    {:reply, updated_state, updated_state}
+  end
+
+  def handle_call({:kick_player, username}, _from, state) do
+    HundredPoints.UserServer.kick_player(username)
+
+    updated_state = %{
+      state |
+        players: HundredPoints.UserServer.players_in_turn_order(),
+        active_player: HundredPoints.UserServer.get_active_player(),
+        standings: HundredPoints.UserServer.standings()
+    }
+
     {:reply, updated_state, updated_state}
   end
 

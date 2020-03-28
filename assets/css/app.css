@@ -17,11 +17,37 @@
 }
 
 .footer {
+  border-top: 1px solid #EEE;
+  padding-top: 10px;
   grid-area: footer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto;
   margin: 40px auto;
+  grid-template-areas:
+    "heading heading heading heading"
+    "col1 col2 col3 col4";
+}
+
+.footer-header {
+  grid-area: heading;
+  margin: 0 auto 15px auto;
+}
+
+.footer-col1 {
+  grid-area: col1;
+}
+
+.footer-col2 {
+  grid-area: col2;
+}
+
+.footer-col3 {
+  grid-area: col3;
+}
+
+.footer-col4 {
+  grid-area: col4;
 }
 
 .game-area {
@@ -110,9 +136,10 @@ ul {
   position: absolute;
   min-width: 160px;
   z-index: 1;
+  margin-top: 30px;
 }
 
-.dropdown-content.dropdown-content-footer {
+.dropdown-content.dropdown-footer {
   display: none;
   position: absolute;
   min-width: 160px;
@@ -141,14 +168,14 @@ ul {
   width: 50%;
   display: block;
   float: left;
-  margin-right: 5px;
+  margin-right: 10px;
 }
 
 .points-field {
   width: 25%;
   display: block;
   float: left;
-  margin-right: 5px;
+  margin-right: 10px;
 }
 
 .card-submit {
@@ -165,4 +192,14 @@ ul {
 
 .big {
   font-size: 1.6em;
+}
+
+.red-bg {
+  background-color: #A00;
+  border: 1px solid #900;
+}
+
+.orange-bg {
+  background-color: #FA0;
+  border: 1px solid #E90;
 }
