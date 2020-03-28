@@ -43,6 +43,10 @@ defmodule HundredPoints.UserServer do
     GenServer.cast(__MODULE__, :shuffle_players)
   end
 
+  def reassign_moderator(username) do
+    GenServer.cast(__MODULE__, {:reassign_moderator, username})
+  end
+
   def handle_call({:add_player, username}, _from, players) do
     case validate_username(players, username) do
       :ok ->
@@ -96,6 +100,10 @@ defmodule HundredPoints.UserServer do
 
   def handle_cast(:shuffle_players, players) do
     {:noreply, Enum.shuffle(players)}
+  end
+
+  def handle_cast({:reassign_moderator, username}, players) do
+    {:noreply, Enum.map(players, &%{&1 | moderator: &1.username == username})}
   end
 
   defp find_user(players, username) do

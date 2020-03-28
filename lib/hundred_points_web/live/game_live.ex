@@ -10,6 +10,9 @@ defmodule HundredPointsWeb.GameLive do
         <div class="nav">
           <span class="nav-item">Hey <strong><%= @user_data.username %></strong>!! You look nice today.</span>
           <span class="nav-item">Game status: <strong><%= @game_state.phase %></strong></span>
+          <%= if @game_state.active_player && @game_state.active_player.username == @user_data.username do %>
+            <span class="nav-item">YOUR TURN!!</span>
+          <% end %>
         </div>
       </div>
 
@@ -31,6 +34,10 @@ defmodule HundredPointsWeb.GameLive do
         <div class="main-game-area">
           <%= if @game_state.phase == :preparation do %>
             <h3>Preparation phase. Make cards until the game starts!</h3>
+          <% end %>
+
+          <%= if @game_state.phase == :game_over do %>
+            <h3>Woohoo, <%= @game_state.winner.username %> wins! Yaaaay, <%= @game_state.winner.username %>!!!</h3>
           <% end %>
 
           <%= if @game_state.phase == :playing do %>
@@ -66,18 +73,26 @@ defmodule HundredPointsWeb.GameLive do
             <hr>
             <h3>Make a new card!</h3>
             <form action="#" method="post" phx-submit="save_card">
-            <input name="_csrf_token" type="hidden" value="FIXME">
-              <label for="action">Action description:</label>
-              <input type="text" name="action" id="action">
+              <div>
+                <input name="_csrf_token" type="hidden" value="<%= Plug.CSRFProtection.get_csrf_token() %>">
+                <div class="action-description-field">
+                  <label for="action">Action description:</label>
+                  <input type="text" name="action" id="action">
+                </div>
 
-              <label for="points">Point value</label>
-              <input type="text" name="points" id="points">
+                <div class="points-field">
+                  <label for="points">Point value</label>
+                  <input type="text" name="points" id="points">
+                </div>
+
+                <div class="card-submit">
+                  <button type="submit">Add card!</button>
+                </div>
+              </div>
 
               <%= if @notice do %>
-                <p><em><%= @notice %></em></p>
+                <div class="card-notice"><em><%= @notice %></em></div>
               <% end %>
-
-              <button type="submit">Add card!</button>
             </form>
           </div>
         <% end %>
@@ -102,14 +117,28 @@ defmodule HundredPointsWeb.GameLive do
       </div>
 
       <div class="footer">
-        <%= if @user_data.moderator do %>
+        <%= if Enum.find(@game_state.players, & &1.moderator).username == @user_data.username do %>
           <hr>
           <div class="nav">
-            <span class="nav-item">You are the moderator!</span>
-            <span class="nav-item">Assign moderator to... [WIP]</span>
+            <span class="nav-item"><strong>You are the moderator!</strong></span>
+            <div class="nav-item dropdown">
+              <button>Assign moderator to... ^</button>
+              <div class="dropdown-content">
+                <%= for player <- @game_state.players do %>
+                  <%= if !player.moderator do %>
+                    <a class="dropdown-footer" href="#" phx-click="reassign_moderator" phx-value-username="<%= player.username %>"><%= player.username %></a>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
             <%= if @game_state.phase == :preparation do %>
               <div class="nav-wrapper">
                 <button phx-click="start_game">Start the game!</button>
+              </div>
+            <% end %>
+            <%= if @game_state.phase == :game_over do %>
+              <div class="nav-wrapper">
+                <button phx-click="restart_game">Restart the game!</button>
               </div>
             <% end %>
           </div>
@@ -152,6 +181,13 @@ defmodule HundredPointsWeb.GameLive do
     {:noreply, assign(socket, game_state: updated_state)}
   end
 
+  def handle_event("restart_game", _params, socket) do
+    updated_state = HundredPoints.GameServer.restart_game()
+    broadcast_update()
+
+    {:noreply, assign(socket, game_state: updated_state)}
+  end
+
   def handle_event("pass_turn", _params, socket) do
     updated_state = HundredPoints.GameServer.pass_turn()
     broadcast_update()
@@ -168,6 +204,13 @@ defmodule HundredPointsWeb.GameLive do
 
   def handle_event("pass_to_player", %{"username" => username}, socket) do
     updated_state = HundredPoints.GameServer.pass_to_player(username)
+    broadcast_update()
+
+    {:noreply, assign(socket, game_state: updated_state)}
+  end
+
+  def handle_event("reassign_moderator", %{"username" => username}, socket) do
+    updated_state = HundredPoints.GameServer.reassign_moderator(username)
     broadcast_update()
 
     {:noreply, assign(socket, game_state: updated_state)}

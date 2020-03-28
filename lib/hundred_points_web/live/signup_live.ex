@@ -12,7 +12,7 @@ defmodule HundredPointsWeb.SignupLive do
     <div class="signup">
       <div>
         <form action="#" method="post" phx-submit="save">
-          <input name="_csrf_token" type="hidden" value="FIXME">
+          <input name="_csrf_token" type="hidden" value="<%= Plug.CSRFProtection.get_csrf_token() %>">
           <label for="user">Hi! What's your name?</label>
           <input type="text" name="user" id="user">
           <%= if @notice do %>

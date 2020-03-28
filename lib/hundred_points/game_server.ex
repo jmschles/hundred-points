@@ -34,6 +34,10 @@ defmodule HundredPoints.GameServer do
     GenServer.call(__MODULE__, {:pass_to_player, username})
   end
 
+  def reassign_moderator(username) do
+    GenServer.call(__MODULE__, {:reassign_moderator, username})
+  end
+
   def action_performed do
     GenServer.call(__MODULE__, :action_performed)
   end
@@ -104,6 +108,14 @@ defmodule HundredPoints.GameServer do
     {:reply, updated_state, updated_state}
   end
 
+  def handle_call({:reassign_moderator, username}, _from, state) do
+    HundredPoints.UserServer.reassign_moderator(username)
+    updated_state = %{
+      state | players: HundredPoints.UserServer.players_in_turn_order(),
+    }
+    {:reply, updated_state, updated_state}
+  end
+
   def handle_call(:action_performed, _from, %{active_card: %{points: points}} = state) do
     next_active_player = HundredPoints.UserServer.award_points(points)
     updated_standings = HundredPoints.UserServer.standings()
@@ -124,7 +136,7 @@ defmodule HundredPoints.GameServer do
             active_card: nil,
             active_player: nil,
             standings: updated_standings,
-            state: :game_over,
+            phase: :game_over,
             winner: winner,
             players: HundredPoints.UserServer.players_in_turn_order()
         }

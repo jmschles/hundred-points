@@ -18,6 +18,10 @@
 
 .footer {
   grid-area: footer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 40px auto;
 }
 
 .game-area {
@@ -47,7 +51,7 @@ ul {
 }
 
 .main-game-area {
-  min-height: 275px;
+  min-height: 250px;
 }
 
 .card-maker {
@@ -108,6 +112,13 @@ ul {
   z-index: 1;
 }
 
+.dropdown-content.dropdown-content-footer {
+  display: none;
+  position: absolute;
+  min-width: 160px;
+  z-index: 1;
+}
+
 .dropdown-content a {
   margin: 5px 0 0 35px;
   padding: 5px;
@@ -124,4 +135,30 @@ ul {
 /* Show the dropdown menu on hover */
 .dropdown:hover .dropdown-content {
   display: block;
+}
+
+.action-description-field {
+  width: 50%;
+  display: block;
+  float: left;
+  margin-right: 5px;
+}
+
+.points-field {
+  width: 25%;
+  display: block;
+  float: left;
+  margin-right: 5px;
+}
+
+.card-submit {
+  width: 15%;
+  display: block;
+  float: left;
+  margin-top: 30px;
+}
+
+.card-notice {
+  width: 100%;
+  float: left;
 }
