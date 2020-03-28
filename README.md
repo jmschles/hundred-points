@@ -27,3 +27,12 @@ Rinse and repeat!
 * I think excess cards will get carried over to the next game. Maybe that's fine!
 * The styling is hilariously bad
 * I probably missed some things. File an issue!
+
+## Refactoring opportunities
+
+In addition to the known issues above, the code could be better...
+
+* We probably don't need controllers at all, I initially put them in because I wasn't getting the layout to render, but later found the solution in the docs
+* Break up that massive game template. Child views maybe?
+* The `GameServer` is just getting used as a proxy to the `UserServer` for a lot of things, there are opportunities for API cleanup
+* And much much more...
