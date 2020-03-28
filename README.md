@@ -20,10 +20,7 @@ Rinse and repeat!
 
 ## Known issues
 * Only one game is possible at a time, so don't tell anyone this is here.
-* We don't kick users off the server on socket disconnect, which means the game will break if a user leaves midgame (since they can't take their turn).
-  * Temp fix for this could be to give the moderator skipping privileges
-* If the moderator goes AFK everything will grind to a halt pretty fast. Also forever.
-* No handling for running out of cards mid-game; the app will crash, so write those cards!
+* We don't kick users off the server on socket disconnect, so if someone leaves without exiting the game with the `Leave button`, the moderator will need to kick them.
 * I think excess cards will get carried over to the next game. Maybe that's fine!
 * The styling is hilariously bad
 * I probably missed some things. File an issue!
