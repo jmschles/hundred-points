@@ -124,7 +124,7 @@ defmodule HundredPointsWeb.GameLive do
             <div class="nav">
               <div class="footer-col1 nav-item dropdown">
                 <button>Assign moderator to...</button>
-                <div class="dropdown-content">
+                <div class="dropdown-content dropdown-footer">
                   <%= for player <- @game_state.players do %>
                     <%= if !player.moderator do %>
                       <a class="dropdown-footer" href="#" phx-click="reassign_moderator" phx-value-username="<%= player.username %>"><%= player.username %></a>
@@ -152,7 +152,7 @@ defmodule HundredPointsWeb.GameLive do
               </div>
               <div class="footer-col4 nav-item dropdown">
                 <button class="red-bg">Kick player...</button>
-                <div class="dropdown-content">
+                <div class="dropdown-content dropdown-footer">
                   <%= for player <- @game_state.players do %>
                     <%= if !player.moderator do %>
                       <a class="dropdown-footer" href="#" phx-click="kick_player" phx-value-username="<%= player.username %>"><%= player.username %></a>
@@ -235,6 +235,10 @@ defmodule HundredPointsWeb.GameLive do
     broadcast_update()
 
     {:noreply, assign(socket, game_state: updated_state)}
+  end
+
+  def handle_event("action_completed", _params, %{assigns: %{game_state: %{card_count: 0}}} = socket) do
+    {:noreply, assign(socket, notice: "Uhoh! No more cards! Add some cards to continue.")}
   end
 
   def handle_event("action_completed", _params, socket) do

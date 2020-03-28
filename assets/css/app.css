@@ -136,19 +136,15 @@ ul {
   position: absolute;
   min-width: 160px;
   z-index: 1;
-  margin-top: 30px;
 }
 
 .dropdown-content.dropdown-footer {
-  display: none;
-  position: absolute;
-  min-width: 160px;
-  z-index: 1;
+  margin-top: 30px;
 }
 
 .dropdown-content a {
-  margin: 5px 0 0 35px;
-  padding: 5px;
+  margin: 0 0 0 35px;
+  padding: 3px;
   text-decoration: none;
   float: none;
   text-align: left;
