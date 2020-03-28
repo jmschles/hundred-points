@@ -19,7 +19,6 @@ defmodule HundredPoints.Card do
     rescue
       _ -> {:error, "Points must be integers"}
     end
-
   end
 
   def validate_action({:error, error}, _action), do: {:error, error}

@@ -203,12 +203,11 @@ defmodule HundredPointsWeb.GameLive do
         broadcast_update()
 
         {:noreply,
-          assign(
-            socket,
-            notice: "Card added",
-            game_state: %{socket.assigns.game_state | card_count: card_count}
-          )
-        }
+         assign(
+           socket,
+           notice: "Card added",
+           game_state: %{socket.assigns.game_state | card_count: card_count}
+         )}
     end
   end
 
@@ -237,7 +236,11 @@ defmodule HundredPointsWeb.GameLive do
     {:noreply, assign(socket, game_state: updated_state)}
   end
 
-  def handle_event("action_completed", _params, %{assigns: %{game_state: %{card_count: 0}}} = socket) do
+  def handle_event(
+        "action_completed",
+        _params,
+        %{assigns: %{game_state: %{card_count: 0}}} = socket
+      ) do
     {:noreply, assign(socket, notice: "Uhoh! No more cards! Add some cards to continue.")}
   end
 

@@ -102,10 +102,12 @@ defmodule HundredPoints.UserServer do
     {
       :reply,
       next_player,
-      [next_player |
-        other_players ++ [
-          %{active_player | score: active_player.score + points}
-        ]
+      [
+        next_player
+        | other_players ++
+            [
+              %{active_player | score: active_player.score + points}
+            ]
       ]
     }
   end
@@ -119,11 +121,11 @@ defmodule HundredPoints.UserServer do
   end
 
   def handle_cast({:kick_player, username}, players) do
-    {:noreply, Enum.reject(players, & &1.username == username)}
+    {:noreply, Enum.reject(players, &(&1.username == username))}
   end
 
   defp find_user(players, username) do
-    Enum.find(players, & &1.username == username)
+    Enum.find(players, &(&1.username == username))
   end
 
   defp rotate_to_user(username, [%{username: username} | _other_players] = players) do
