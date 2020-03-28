@@ -25,6 +25,10 @@ defmodule HundredPoints.CardServer do
     GenServer.cast(__MODULE__, :shuffle_cards)
   end
 
+  def clear_cards do
+    GenServer.cast(__MODULE__, :clear_cards)
+  end
+
   def handle_call({:add_card, card}, _from, cards) do
     updated_card_list = cards ++ [card]
     {:reply, {:ok, length(updated_card_list)}, updated_card_list}
@@ -42,12 +46,7 @@ defmodule HundredPoints.CardServer do
     {:noreply, Enum.shuffle(cards)}
   end
 
-  # defp seed_cards do
-  #   [
-  #     %Card{points: 10, action: "Jump"},
-  #     %Card{points: 20, action: "Hide"},
-  #     %Card{points: 30, action: "Giggle"},
-  #     %Card{points: 50, action: "Dance"}
-  #   ]
-  # end
+  def handle_cast(:clear_cards, _cards) do
+    {:noreply, []}
+  end
 end

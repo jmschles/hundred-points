@@ -80,6 +80,10 @@ defmodule HundredPoints.UserServer do
     {:reply, reset_players, reset_players}
   end
 
+  def handle_call(:get_active_player, _from, []) do
+    {:reply, nil, []}
+  end
+
   def handle_call(:get_active_player, _from, [active_player | _other_players] = players) do
     {:reply, active_player, players}
   end

@@ -137,14 +137,23 @@ defmodule HundredPoints.GameServer do
   def handle_call({:kick_player, username}, _from, state) do
     HundredPoints.UserServer.kick_player(username)
 
-    updated_state = %{
-      state
-      | players: HundredPoints.UserServer.players_in_turn_order(),
-        active_player: HundredPoints.UserServer.get_active_player(),
-        standings: HundredPoints.UserServer.standings()
-    }
+    case HundredPoints.UserServer.get_active_player() do
+      nil ->
+        # Last player has left, so go medieval and reset all
+        HundredPoints.CardServer.clear_cards()
+        reboot_state = %Game{phase: :preparation, standings: [], players: [], card_count: 0}
+        {:reply, reboot_state, reboot_state}
 
-    {:reply, updated_state, updated_state}
+      active_player ->
+        updated_state = %{
+          state
+          | players: HundredPoints.UserServer.players_in_turn_order(),
+            active_player: active_player,
+            standings: HundredPoints.UserServer.standings()
+        }
+
+        {:reply, updated_state, updated_state}
+    end
   end
 
   def handle_call(:action_performed, _from, %{active_card: %{points: points}} = state) do

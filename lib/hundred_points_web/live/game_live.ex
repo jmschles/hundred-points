@@ -119,9 +119,20 @@ defmodule HundredPointsWeb.GameLive do
         </div>
 
         <div class="footer">
-          <%= if Enum.find(@game_state.players, & &1.moderator).username == @user_data.username do %>
-            <div class="footer-header"><strong>You are the moderator!</strong></div>
-            <div class="nav">
+          <% moderator_username = Enum.find(@game_state.players, & &1.moderator).username %>
+
+          <%= if moderator_username == @user_data.username do %>
+            <div class="footer-header">
+              <strong>You are the moderator!</strong>
+            </div>
+          <% else %>
+            <div class="footer-header">
+              Moderator is <strong><%= Enum.find(@game_state.players, & &1.moderator).username %>.</strong>
+            </div>
+          <% end %>
+
+          <div class="nav">
+            <%= if moderator_username == @user_data.username do %>
               <div class="footer-col1 nav-item dropdown">
                 <button>Assign moderator to...</button>
                 <div class="dropdown-content dropdown-footer">
@@ -160,14 +171,19 @@ defmodule HundredPointsWeb.GameLive do
                   <% end %>
                 </div>
               </div>
-            </div>
-          <% else %>
-            <div class="footer-col1 nav">
+            <% else %>
+              <div class="footer-col4 nav-item">
+                <div class="nav-wrapper">
+                  <button phx-click="reassign_moderator" phx-value-username="<%= @user_data.username %>">Become the moderator</button>
+                </div>
+              </div>
+            <% end %>
+            <div class="footer-col5 nav-item">
               <div class="nav-wrapper">
-                <button phx-click="reassign_moderator" phx-value-username="<%= @user_data.username %>">Become the moderator</button>
+                <button class="red-bg" phx-click="kick_player" phx-value-username="<%= @user_data.username %>">Leave game</button>
               </div>
             </div>
-          <% end %>
+          </div>
         </div>
       <% else %>
         <div class="game-area">
