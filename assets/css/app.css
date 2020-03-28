@@ -2,3 +2,126 @@
 
 @import "./phoenix.css";
 @import "../../deps/phoenix_live_view/assets/css/live_view.css";
+
+.signup {
+  max-width: 80rem;
+  margin: 20px auto;
+}
+
+.signup input {
+  margin: 40px auto;
+}
+
+.header {
+  grid-area: header;
+}
+
+.footer {
+  grid-area: footer;
+}
+
+.game-area {
+  grid-area: main;
+}
+.players {
+  grid-area: left;
+}
+.standings {
+  grid-area: right;
+}
+
+.inner-container {
+  display: grid;
+  grid-template-columns: 15% 60% 25%;
+  grid-template-rows: auto;
+  column-gap: 45px;
+  row-gap: 1em;
+  grid-template-areas:
+    "header header header"
+    "left main right"
+    "footer footer footer";
+}
+
+ul {
+  list-style: none;
+}
+
+.main-game-area {
+  min-height: 275px;
+}
+
+.card-maker {
+  margin-top: 30px;
+}
+
+.nav {
+  list-style-type: none;
+}
+
+.nav-item {
+  float: left;
+  margin: 0 40px 50px 0;
+}
+
+.active-card {
+  padding: 30px;
+  background-color: #DDD;
+  border: 1px solid #BBB;
+  border-radius: 5px;
+}
+
+.active-card-action {
+  font-size: 2.4em;
+}
+
+.active-card-points {
+  font-size: 1.6em;
+}
+
+.dark-gray {
+  color: #666;
+}
+
+.nav-item button {
+  float: left;
+}
+
+.nav-wrapper {
+  float: left;
+}
+
+.player-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 40px auto;
+}
+
+.player-actions button {
+  margin: 0 30px;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  min-width: 160px;
+  z-index: 1;
+}
+
+.dropdown-content a {
+  margin: 5px 0 0 35px;
+  padding: 5px;
+  text-decoration: none;
+  float: none;
+  text-align: left;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}

@@ -3,7 +3,7 @@ defmodule HundredPoints.GameServer do
   alias HundredPoints.Game
 
   def init(_initial_state) do
-    {:ok, %Game{phase: :preparation, standings: []}}
+    {:ok, %Game{phase: :preparation, standings: [], players: []}}
   end
 
   def start_link(initial_state) do
@@ -18,7 +18,11 @@ defmodule HundredPoints.GameServer do
     GenServer.call(__MODULE__, :begin_play)
   end
 
-  def get_game_state do
+  def add_player(username) do
+    GenServer.call(__MODULE__, {:add_player, username})
+  end
+
+  def get_state do
     GenServer.call(__MODULE__, :get_state)
   end
 
@@ -43,6 +47,7 @@ defmodule HundredPoints.GameServer do
         active_player: nil,
         winner: nil,
         standings: HundredPoints.UserServer.standings(),
+        players: HundredPoints.UserServer.players_in_turn_order(),
         phase: :preparation,
     }
 
@@ -56,6 +61,7 @@ defmodule HundredPoints.GameServer do
     updated_state = %{state |
       phase: :playing,
       active_player: HundredPoints.UserServer.next_active_player(),
+      players: HundredPoints.UserServer.players_in_turn_order(),
       active_card: HundredPoints.CardServer.next_card(),
       standings: HundredPoints.UserServer.standings()
     }
@@ -63,18 +69,37 @@ defmodule HundredPoints.GameServer do
     {:reply, updated_state, updated_state}
   end
 
+  def handle_call({:add_player, username}, _from, state) do
+    case HundredPoints.UserServer.add_player(username) do
+      {:ok, player} ->
+        updated_state = %{state |
+          standings: HundredPoints.UserServer.standings(),
+          players: HundredPoints.UserServer.players_in_turn_order()
+        }
+        {:reply, {:ok, player}, updated_state}
+
+      {:error, error} ->
+        {:reply, {:error, error}, state}
+    end
+  end
+
   def handle_call(:get_state, _from, state), do: {:reply, state, state}
 
   def handle_call(:pass_turn, _from, state) do
     updated_state = %{
-      state | active_player: HundredPoints.UserServer.next_active_player()
+      state |
+        active_player: HundredPoints.UserServer.next_active_player(),
+        players: HundredPoints.UserServer.players_in_turn_order()
     }
     {:reply, updated_state, updated_state}
   end
 
   def handle_call({:pass_to_player, username}, _from, state) do
+    chosen_player = HundredPoints.UserServer.select_active_player(username)
     updated_state = %{
-      state | active_player: HundredPoints.UserServer.select_active_player(username)
+      state |
+        active_player: chosen_player,
+        players: HundredPoints.UserServer.players_in_turn_order(),
     }
     {:reply, updated_state, updated_state}
   end
@@ -89,7 +114,8 @@ defmodule HundredPoints.GameServer do
           state |
             active_card: HundredPoints.CardServer.next_card(),
             active_player: next_active_player,
-            standings: updated_standings
+            standings: updated_standings,
+            players: HundredPoints.UserServer.players_in_turn_order()
         }
 
       %HundredPoints.User{} = winner ->
@@ -99,7 +125,8 @@ defmodule HundredPoints.GameServer do
             active_player: nil,
             standings: updated_standings,
             state: :game_over,
-            winner: winner
+            winner: winner,
+            players: HundredPoints.UserServer.players_in_turn_order()
         }
       end
 

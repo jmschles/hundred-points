@@ -9,7 +9,7 @@ defmodule HundredPointsWeb.SignupLive do
 
   def render(assigns) do
     ~L"""
-    <div class="">
+    <div class="signup">
       <div>
         <form action="#" method="post" phx-submit="save">
           <input name="_csrf_token" type="hidden" value="FIXME">
@@ -31,7 +31,7 @@ defmodule HundredPointsWeb.SignupLive do
   end
 
   def handle_event("save", %{"user" => username}, socket) do
-    case HundredPoints.UserServer.add_user(username) do
+    case HundredPoints.GameServer.add_player(username) do
       {:error, error} ->
         {:noreply, assign(socket, notice: error)}
 

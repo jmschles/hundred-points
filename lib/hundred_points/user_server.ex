@@ -10,13 +10,17 @@ defmodule HundredPoints.UserServer do
     GenServer.start_link(__MODULE__, players, name: __MODULE__)
   end
 
-  def add_user(username) do
-    GenServer.call(__MODULE__, {:add_user, username})
+  def add_player(username) do
+    GenServer.call(__MODULE__, {:add_player, username})
   end
 
   # TODO: this is for scoring, maybe game responsibility
   def standings do
     GenServer.call(__MODULE__, :standings)
+  end
+
+  def players_in_turn_order do
+    GenServer.call(__MODULE__, :players)
   end
 
   def reset_scores do
@@ -39,7 +43,7 @@ defmodule HundredPoints.UserServer do
     GenServer.cast(__MODULE__, :shuffle_players)
   end
 
-  def handle_call({:add_user, username}, _from, players) do
+  def handle_call({:add_player, username}, _from, players) do
     case validate_username(players, username) do
       :ok ->
         moderator = Enum.empty?(players)
@@ -55,9 +59,18 @@ defmodule HundredPoints.UserServer do
     {:reply, Enum.sort(players, &(&1.score >= &2.score)), players}
   end
 
+  def handle_call(:players, _from, players) do
+    {:reply, players, players}
+  end
+
   def handle_call(:reset_scores, _from, players) do
     reset_players = Enum.map(players, &%{&1 | score: 0})
     {:reply, reset_players, reset_players}
+  end
+
+  # If you're playing by yourself, or testing, or just trying to break stuff
+  def handle_call(:next_active_player, _from, [lonely_player]) do
+    {:reply, lonely_player, [lonely_player]}
   end
 
   def handle_call(:next_active_player, _from, [active_player | [next_player | other_players]]) do
