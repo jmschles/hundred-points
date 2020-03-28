@@ -162,3 +162,7 @@ ul {
   width: 100%;
   float: left;
 }
+
+.big {
+  font-size: 1.6em;
+}

@@ -13,7 +13,7 @@
       <section class="container">
         <nav role="navigation">
           <ul>
-            <li>100 Points</li>
+            <li class="big">100 Points</li>
           </ul>
         </nav>
       </section>
