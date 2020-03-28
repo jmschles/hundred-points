@@ -3,7 +3,7 @@ defmodule HundredPoints.GameServer do
   alias HundredPoints.Game
 
   def init(_initial_state) do
-    {:ok, %Game{phase: :preparation, standings: [], players: []}}
+    {:ok, %Game{phase: :preparation, standings: [], players: [], card_count: 0}}
   end
 
   def start_link(initial_state) do
@@ -46,6 +46,10 @@ defmodule HundredPoints.GameServer do
     GenServer.call(__MODULE__, :action_performed)
   end
 
+  def add_card(params) do
+    GenServer.call(__MODULE__, {:add_card,  params})
+  end
+
   def handle_call(:restart_game, _from, state) do
     HundredPoints.UserServer.reset_scores()
 
@@ -71,6 +75,7 @@ defmodule HundredPoints.GameServer do
       active_player: HundredPoints.UserServer.next_active_player(),
       players: HundredPoints.UserServer.players_in_turn_order(),
       active_card: HundredPoints.CardServer.next_card(),
+      card_count: state.card_count - 1,
       standings: HundredPoints.UserServer.standings()
     }
 
@@ -142,6 +147,7 @@ defmodule HundredPoints.GameServer do
         %{
           state |
             active_card: HundredPoints.CardServer.next_card(),
+            card_count: state.card_count - 1,
             active_player: next_active_player,
             standings: updated_standings,
             players: HundredPoints.UserServer.players_in_turn_order()
@@ -160,6 +166,16 @@ defmodule HundredPoints.GameServer do
       end
 
     {:reply, updated_state, updated_state}
+  end
+
+  def handle_call({:add_card, params}, _from, state) do
+    case HundredPoints.CardServer.add_card(params) do
+      {:error, error} ->
+        {:reply, {:error, error}, state}
+
+      {:ok, card_count} ->
+        {:reply, {:ok, card_count}, %{state | card_count: card_count}}
+    end
   end
 
   @winning_score 100

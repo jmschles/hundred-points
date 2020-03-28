@@ -11,6 +11,7 @@ defmodule HundredPointsWeb.GameLive do
           <div class="nav">
             <span class="nav-item">Hey <strong><%= @user_data.username %></strong>!! You look nice today.</span>
             <span class="nav-item">Game status: <strong><%= @game_state.phase %></strong></span>
+            <span class="nav-item">Cards in reserve: <%= @game_state.card_count %> <em>(don't go below zero!)</em></span>
             <%= if @game_state.active_player && @game_state.active_player.username == @user_data.username do %>
               <span class="nav-item"><strong>YOUR TURN!!</strong></span>
             <% end %>
@@ -194,13 +195,25 @@ defmodule HundredPointsWeb.GameLive do
   end
 
   def handle_event("save_card", params, socket) do
-    case HundredPoints.CardServer.add_card(params) do
+    case HundredPoints.GameServer.add_card(params) do
       {:error, error} ->
         {:noreply, assign(socket, notice: error)}
 
-      {:ok, _card} ->
-        {:noreply, assign(socket, notice: "Card added")}
+      {:ok, card_count} ->
+        broadcast_update()
+
+        {:noreply,
+          assign(
+            socket,
+            notice: "Card added",
+            game_state: %{socket.assigns.game_state | card_count: card_count}
+          )
+        }
     end
+  end
+
+  def handle_event("start_game", _params, %{assigns: %{game_state: %{card_count: 0}}} = socket) do
+    {:noreply, assign(socket, notice: "Need cards to start playing. Make some!")}
   end
 
   def handle_event("start_game", _params, socket) do

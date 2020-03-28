@@ -3,8 +3,7 @@ defmodule HundredPoints.CardServer do
   alias HundredPoints.Card
 
   def init(cards) do
-    # REMOVE ME
-    {:ok, seed_cards()}
+    {:ok, cards}
   end
 
   def start_link(cards) do
@@ -27,7 +26,8 @@ defmodule HundredPoints.CardServer do
   end
 
   def handle_call({:add_card, card}, _from, cards) do
-    {:reply, {:ok, card}, cards ++ [card]}
+    updated_card_list = cards ++ [card]
+    {:reply, {:ok, length(updated_card_list)}, updated_card_list}
   end
 
   def handle_call(:next_card, _from, []) do
@@ -42,12 +42,12 @@ defmodule HundredPoints.CardServer do
     {:noreply, Enum.shuffle(cards)}
   end
 
-  defp seed_cards do
-    [
-      %Card{points: 10, action: "Jump"},
-      %Card{points: 20, action: "Hide"},
-      %Card{points: 30, action: "Giggle"},
-      %Card{points: 50, action: "Dance"}
-    ]
-  end
+  # defp seed_cards do
+  #   [
+  #     %Card{points: 10, action: "Jump"},
+  #     %Card{points: 20, action: "Hide"},
+  #     %Card{points: 30, action: "Giggle"},
+  #     %Card{points: 50, action: "Dance"}
+  #   ]
+  # end
 end
