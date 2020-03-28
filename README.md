@@ -6,7 +6,7 @@ A fun game for Nat! I had not heard of this game before.
 ## Rules
 Players get points for performing actions. First to 100 points (get it?) wins.
 
-**Phase 1:** Players write cards, desribing the action and assigning a point value. When everyone's ready to rock, the moderator starts the game.
+**Phase 1:** Players write cards, describing the action and assigning a point value. When everyone's ready to rock, the moderator starts the game.
 
 **Phase 2:** Cards are shuffled and players are assigned a random turn ordr. Players then take turns picking a card off the deck. They have 3 choices:
 * Perform the action to gain points equal to the value of the card
