@@ -1,19 +1,16 @@
 # HundredPoints
 
-To start your Phoenix server:
+### What is this?
+A fun game for Nat! I had not heard of this game before.
 
-  * Install dependencies with `mix deps.get`
-  * Install Node.js dependencies with `cd assets && npm install`
-  * Start Phoenix endpoint with `mix phx.server`
+### Known issues
+* Only one game is possible at a time, so don't tell anyone this is here
+* We don't kick users off the server on socket disconnect, which ain't good
+* If the moderator goes AFK everything will pretty much grind to a halt
+* No handling for running out of cards mid-game
+* I think excess cards will get carried over to the next game
+* The styling is hilariously bad
+* I probably missed some things. File an issue!
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
-
-## Learn more
-
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+### Deployment
+* Currently up at https://round-brave-davidstiger.gigalixirapp.com/
