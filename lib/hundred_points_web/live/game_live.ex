@@ -11,7 +11,7 @@ defmodule HundredPointsWeb.GameLive do
           <div class="nav">
             <span class="nav-item">Hey <strong><%= @user_data.username %></strong>!! You look nice today.</span>
             <span class="nav-item">Game status: <strong><%= @game_state.phase %></strong></span>
-            <span class="nav-item">Cards in reserve: <%= @game_state.card_count %> <em>(don't go below zero!)</em></span>
+            <span class="nav-item">Cards in reserve: <%= @game_state.card_count %></span>
             <%= if @game_state.active_player && @game_state.active_player.username == @user_data.username do %>
               <span class="nav-item"><strong>YOUR TURN!!</strong></span>
             <% end %>
