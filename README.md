@@ -20,7 +20,7 @@ Rinse and repeat!
 
 ## Known issues
 * Only one game is possible at a time, so don't tell anyone this is here.
-* We don't kick users off the server on socket disconnect, so if someone leaves without exiting the game with the `Leave button`, the moderator will need to kick them.
+* We don't kick users off the server on socket disconnect, so if someone leaves without exiting the game with the `Leave game` button, the moderator will need to kick them.
 * I think excess cards will get carried over to the next game. Maybe that's fine!
 * The styling is hilariously bad
 * I probably missed some things. File an issue!
