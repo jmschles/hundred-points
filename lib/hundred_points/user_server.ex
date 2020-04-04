@@ -58,7 +58,7 @@ defmodule HundredPoints.UserServer do
   def handle_call({:add_player, username}, _from, players) do
     case validate_username(players, username) do
       :ok ->
-        moderator = Enum.empty?(players)
+        moderator = !Enum.any?(players, & &1.moderator)
         user = %User{username: username, moderator: moderator}
         {:reply, {:ok, user}, [user | players]}
 
@@ -125,7 +125,23 @@ defmodule HundredPoints.UserServer do
   end
 
   def handle_cast({:kick_player, username}, players) do
-    {:noreply, Enum.reject(players, &(&1.username == username))}
+    to_kick = find_user(players, username)
+    remaining_players = Enum.reject(players, &(&1.username == username))
+
+    cond do
+      is_nil(to_kick) ->
+        {:noreply, players}
+
+      length(remaining_players) == 0 ->
+        {:noreply, []}
+
+      to_kick.moderator ->
+        [new_moderator | other_players] = remaining_players
+        {:noreply, [%{new_moderator | moderator: true} | other_players]}
+
+      true ->
+        {:noreply, remaining_players}
+    end
   end
 
   defp find_user(players, username) do
